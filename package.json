@@ -1,8 +1,19 @@
 {
   "name": "splyt",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "author": {
+    "name": "Albert Sabate Martinez",
+    "email": "albert@sabatemartinez.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AlbertSabate/splyt.git"
+  },
+  "homepage": "http://localhost",
   "dependencies": {
+    "node-sass": "^4.12.0",
+    "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1"
@@ -11,7 +22,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "coverage": "npm test -- --coverage"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -27,5 +38,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js}",
+      "!src/index.js"
+    ]
+  },
+  "devDependencies": {
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.13.2"
   }
 }
