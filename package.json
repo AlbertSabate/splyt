@@ -2,6 +2,7 @@
   "name": "splyt",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "author": {
     "name": "Albert Sabate Martinez",
     "email": "albert@sabatemartinez.com"
