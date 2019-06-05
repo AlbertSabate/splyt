@@ -1,29 +1,67 @@
 import React, { Component } from 'react';
 import RangeSlider from '@gilbarbara/react-range-slider';
-import L from 'leaflet';
-import { Map, TileLayer, ZoomControl, Marker } from 'react-leaflet';
+import { Map, TileLayer, ZoomControl } from 'react-leaflet';
+import MarkerList from './MarkerList';
 import 'leaflet/dist/leaflet.css';
 import './App.scss';
 
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
-});
-
-// GET https://qa-interview-test.qa.splytech.io/api/drivers?latitude=51.5049375,&longitude=-0.0964509&count=1
+const CORS_IGNORE = 'https://cors-anywhere.herokuapp.com/';
+const DRIVERS_ENDPOINT = 'https://qa-interview-test.qa.splytech.io/api/drivers';
 
 class App extends Component {
-  center = [51.5049375, -0.0964509];
+  _isMounted = false;
   state = {
-    sliderValue: 20,
+    lat: 51.5049375,
+    lng: -0.0964509,
+    zoom: 15,
+    totalDrivers: 20,
+    drivers: [],
     draggable: true,
   };
 
-  handleChange = ({ y: sliderValue }) => {
+  abortController = new AbortController();
+
+  async componentDidMount() {
+    this._isMounted = true;
+    const drivers = await this.getTaxiLocation();
+    this._isMounted && this.setState({ drivers });
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  getTaxiLocation = async () => {
+    const queryParams = Object.entries({
+      latitude: this.state.lat,
+      longitude: this.state.lng,
+      count: this.state.totalDrivers,
+    }).map(([key, val]) => `${key}=${val}`).join('&');
+
+    const response = await fetch(`${CORS_IGNORE}${DRIVERS_ENDPOINT}?${queryParams}`);
+    const { drivers } = await response.json();
+
+    return drivers;
+  }
+
+  handleMapMove = async (event) => {
     this.setState({
-      sliderValue: sliderValue + 1,
+      ...event.target.getCenter(),
+      zoom: event.target.getZoom(),
+    });
+
+    const drivers = await this.getTaxiLocation();
+    this._isMounted && this.setState({ drivers });
+  };
+
+  handleSliderEnd = async () => {
+    const drivers = await this.getTaxiLocation();
+    this._isMounted && this.setState({ drivers });
+  };
+
+  handleSliderChange = ({ y: totalDrivers }) => {
+    this.setState({
+      totalDrivers: totalDrivers + 1,
     });
   };
 
@@ -49,12 +87,14 @@ class App extends Component {
         </header>
         <Map
           className="map"
-          center={this.center}
-          zoom={17}
+          center={[this.state.lat, this.state.lng]}
+          zoom={this.state.zoom}
           maxZoom={17}
           minZoom={8}
           zoomControl={false}
           dragging={this.state.draggable}
+          onMoveEnd={this.handleMapMove}
+          onZoomEnd={this.handleMapMove}
         >
           <TileLayer attribution="Albert Sabate (Splyt)" url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
           <ZoomControl position="topright" />
@@ -62,7 +102,7 @@ class App extends Component {
             <div className="slider">
               <RangeSlider
                 axis="y"
-                y={this.state.sliderValue}
+                y={this.state.totalDrivers}
                 styles={{
                   options: {
                     handleBorderRadius: 10,
@@ -75,12 +115,13 @@ class App extends Component {
                 yMin={0}
                 yMax={49}
                 yStep={1}
-                onChange={this.handleChange}
+                onChange={this.handleSliderChange}
+                onDragEnd={this.handleSliderEnd}
               />
             </div>
-            <div className='slider-value'>{this.state.sliderValue}</div>
+            <div className='slider-value'>{this.state.totalDrivers}</div>
           </div>
-          <Marker position={this.center}></Marker>
+          <MarkerList markers={this.state.drivers} />
         </Map>
       </div>
     );

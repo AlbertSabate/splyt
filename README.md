@@ -44,6 +44,11 @@ make up
 Finally, we can check the result:
 [Splyt Test App](http://localhost)
 
+You can stop and delete the container with
+```
+make stop
+```
+
 
 ## Built With
 * This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

@@ -11,4 +11,8 @@ build:
 	docker build -t albertsabate/splyt:latest .
 
 up:
-	docker run -d -p 80:80 albertsabate/splyt
+	docker run -d -p 80:80 --name asSplytTest albertsabate/splyt
+
+stop:
+	docker stop asSplytTest
+	docker rm asSplytTest
