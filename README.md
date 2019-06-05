@@ -46,7 +46,9 @@ Finally, we can check the result:
 
 
 ## Built With
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+* This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+* Using Leaflet as a map tech, easy to use, well documented and huge community [Leaflet](https://leafletjs.com)
+* This Component give me whatever I need, it is small and easy to implement. [RangeSlider](https://github.com/gilbarbara/react-range-slider)
 
 
 ## Author
