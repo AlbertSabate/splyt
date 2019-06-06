@@ -19,8 +19,6 @@ class App extends Component {
     draggable: true,
   };
 
-  abortController = new AbortController();
-
   async componentDidMount() {
     this._isMounted = true;
     const drivers = await this.getTaxiLocation();
